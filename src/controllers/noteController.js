@@ -1,6 +1,5 @@
-import addNoteSchema from "../validators/add-note-validator.js";
-import editNoteSchema from "../validators/edit-note-validator.js";
 import Note from "../models/noteModel.js";
+import User from "../models/userModel.js";
 
 export const getAllNotes = async (_, res) => {
   const data = await Note.find();
@@ -19,6 +18,7 @@ export const getSingleNote = async (req, res) => {
   const { id } = req.params;
   const note = await Note.findOne({ id: +id });
   if (!note) {
+    throw Error("There is no note with this id");
     return res.status(401).json({ message: "There is no note with this id" });
   }
   const newNote = {
@@ -32,14 +32,13 @@ export const getSingleNote = async (req, res) => {
 };
 
 export const addNote = async (req, res) => {
-  const { body } = req;
-  const validator = await addNoteSchema(body);
-  const { value, error } = validator.validate(body);
-  if (error) {
-    return res.status(401).json(error.details);
+  const { title, content, user_id } = req.body;
+  const user = await User.findOne({ _id: user_id });
+  if (!user) {
+    throw Error("There is no note with this id");
+    return res.status(401).json({ message: "There is no note with this id" });
   }
 
-  const { title, content, user_id } = value;
   const lastNote = await Note.find().sort({ _id: -1 }).limit(1);
   const id = lastNote.length > 0 ? lastNote[0].id + 1 : 1;
   const newNote = {
@@ -54,20 +53,19 @@ export const addNote = async (req, res) => {
 };
 
 export const updateNote = async (req, res) => {
-  const { body } = req;
-  const validator = await editNoteSchema(body);
-  const { value, error } = validator.validate(body);
-  if (error) {
-    return res.status(401).json(error.details);
+  const { id } = req.params;
+  const { title, content } = req.body;
+  const note = await Note.findOne({ id: +id });
+  if (!note) {
+    throw Error("There is no note with this id");
+    return res.status(401).json({ message: "There is no note with this id" });
   }
 
-  const { title, content, user_id, id } = value;
   await Note.findOneAndUpdate(
-    { id },
+    { id: +id },
     {
       title,
       content,
-      user_id,
     }
   );
 
@@ -78,10 +76,10 @@ export const deleteNote = async (req, res) => {
   const { id } = req.params;
   const note = await Note.findOne({ id: +id });
   if (!note) {
-    return res.status(401).json({ message: "there is no note with this id" });
+    throw Error("There is no note with this id");
+    return res.status(401).json({ message: "There is no note with this id" });
   }
 
-  await note.delete();
-
+  await Note.findOneAndRemove({ id: +id });
   return res.status(200).json({ message: "note deleted successfully" });
 };

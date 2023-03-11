@@ -10,6 +10,53 @@ servers:
   - url: http://localhost:3000/api
     description: local server
 paths:
+  /register:
+    post:
+      tags:
+        - Users
+      requestBody:
+        description: create user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              name: Giorgi Katamadze
+              email: test_email@example.com
+              password: test123
+      responses:
+        "200":
+          description: user created
+  /login:
+    post:
+      tags:
+        - Users
+      requestBody:
+        description: login user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: test_email@example.com
+              password: test123
+      responses:
+        "200":
+          description: user loggedin
   /notes:
     get:
       tags:
@@ -23,6 +70,30 @@ paths:
                 type: array
                 items:
                   type: string
+    post:
+      tags:
+        - Notes
+      requestBody:
+        description: create note
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                user_id:
+                  type: string
+            example:
+              title: Node is awesome
+              content: Don't use nodemon on server
+              user_id: hgshglsdg
+      responses:
+        "200":
+          description: note created
   /notes/{id}:
     get:
       parameters:
@@ -78,40 +149,9 @@ paths:
                   type: string
                 content:
                   type: string
-                user_id:
-                  type: string
-                id:
-                  type: number
             example:
               title: Awesome idea!
               content: Awesome idea! Trying to find framework-specific project within hubs can be tedious
-              user_id: hgshglsdg
-              id: 2
       responses:
         "200":
           description: note edited
-  /notes:
-    post:
-      tags:
-        - Notes
-      requestBody:
-        description: create note
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                content:
-                  type: string
-                user_id:
-                  type: string
-            example:
-              title: Node is awesome
-              content: Don't use nodemon on server
-              user_id: hgshglsdg
-      responses:
-        "200":
-          description: note created

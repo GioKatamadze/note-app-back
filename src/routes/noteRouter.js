@@ -13,6 +13,6 @@ noteRouter.get("/notes", getAllNotes);
 noteRouter.post("/notes", addNote);
 noteRouter.get("/notes/:id", getSingleNote);
 noteRouter.put("/notes/:id", updateNote);
-noteRouter.post("/notes/:id", deleteNote);
+noteRouter.delete("/notes/:id", deleteNote);
 
 export default noteRouter;
