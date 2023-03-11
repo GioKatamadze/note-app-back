@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Note App
+  description: Note App API
+  version: 0.1.9
+
+servers:
+  # - url: https://web-production-b206.up.railway.app/api
+  #   description: production server
+  - url: http://localhost:3000/api
+    description: local server
+paths:
+  /notes:
+    get:
+      tags:
+        - Notes
+      responses:
+        "200":
+          description: Successfully fetched
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /notes/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+            example: 1
+          required: true
+      tags:
+        - Notes
+      responses:
+        "200":
+          description: Successfully fetched
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+    delete:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+            example: 1
+          required: true
+      tags:
+        - Notes
+      responses:
+        "200":
+          description: Note deleted
+    put:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+            example: 1
+          required: true
+      tags:
+        - Notes
+      requestBody:
+        description: edit feedback
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                user_id:
+                  type: string
+                id:
+                  type: number
+            example:
+              title: Awesome idea!
+              content: Awesome idea! Trying to find framework-specific project within hubs can be tedious
+              user_id: hgshglsdg
+              id: 2
+      responses:
+        "200":
+          description: note edited
+  /notes:
+    post:
+      tags:
+        - Notes
+      requestBody:
+        description: create note
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                user_id:
+                  type: string
+            example:
+              title: Node is awesome
+              content: Don't use nodemon on server
+              user_id: hgshglsdg
+      responses:
+        "200":
+          description: note created
