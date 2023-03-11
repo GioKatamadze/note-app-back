@@ -16,7 +16,7 @@ const determineIfNoteExist = (note) => (value, helpers) => {
   return value;
 };
 
-const addNoteSchema = async (data) => {
+const editNoteSchema = async (data) => {
   const note = await Note.findOne({ id: data.id });
   const user = await User.findOne({ id: data.user_id });
   return Joi.object({
@@ -46,4 +46,4 @@ const addNoteSchema = async (data) => {
   });
 };
 
-export default addNoteSchema;
+export default editNoteSchema;
