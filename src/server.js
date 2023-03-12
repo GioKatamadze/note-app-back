@@ -13,8 +13,8 @@ connectToMongo();
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use("/api", userRouter);
-app.use("/api", noteRouter);
-app.use("/", ...swaggerMiddleware());
+app.use("/api", cors(), userRouter);
+app.use("/api", cors(), noteRouter);
+app.use("/", cors(), ...swaggerMiddleware());
 
 app.listen(process.env.PORT || 3000);
