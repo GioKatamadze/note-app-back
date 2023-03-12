@@ -18,3 +18,5 @@ app.use("/api", cors(), noteRouter);
 app.use("/", cors(), ...swaggerMiddleware());
 
 app.listen(process.env.PORT || 3000);
+
+export default app;

@@ -1,44 +1,94 @@
-import asyncHandler from "express-async-handler";
-import generateToken from "../utils/generateToken.js";
-import User from "../models/userModel.js";
+import { RegisterUser } from "../src/controllers/userController";
+import { User } from "../src/models/User";
 
-export const RegisterUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  const userExists = await User.findOne({ email });
-
-  if (userExists) {
-    throw Error("User already exists");
-    res.status(404).json({ message: "User already exists" });
-  }
-
-  const user = await User.create({ name, email, password });
-
-  if (user) {
-    res.status(201).json({
-      user_id: user._id,
-      email: user.email,
-      name: user.name,
+describe("userController", () => {
+  describe("RegisterUser", () => {
+    afterEach(() => {
+      jest.restoreAllMocks();
     });
-  } else {
-    throw Error("invalid user data");
-    res.status(400).json({ message: "invalid user data" });
-  }
-});
 
-export const LoginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+    it("should create a new user and return user data for valid input", async () => {
+      const req = {
+        body: {
+          name: "Test User",
+          email: "test@example.com",
+          password: "password",
+        },
+      };
+      const res = {
+        json: jest.fn(),
+        status: jest.fn(),
+      };
+      const user = {
+        _id: "1",
+        name: "Test User",
+        email: "test@example.com",
+      };
 
-  const user = await User.findOne({ email });
+      jest.spyOn(User, "findOne").mockResolvedValue(null);
+      jest.spyOn(User, "create").mockResolvedValue(user);
 
-  if (user && (await user.matchPassword(password))) {
-    res.json({
-      user_id: user._id,
-      name: user.name,
-      email: user.email,
-      token: generateToken(user._id),
+      await RegisterUser(req, res);
+
+      expect(User.findOne).toHaveBeenCalledWith({ email: req.body.email });
+      expect(User.create).toHaveBeenCalledWith({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password,
+      });
+      expect(res.json).toHaveBeenCalledWith({
+        user_id: user._id,
+        name: user.name,
+        email: user.email,
+      });
+      expect(res.status).toHaveBeenCalledWith(201);
     });
-  } else {
-    throw Error("invalid email or password");
-    res.status(401).json({ message: "invalid email or password" });
-  }
+
+    it("should throw an error and return an error response for an existing user", async () => {
+      const req = {
+        body: {
+          name: "Test User",
+          email: "test@example.com",
+          password: "password",
+        },
+      };
+      const res = {
+        json: jest.fn(),
+        status: jest.fn(),
+      };
+      const user = {
+        _id: "1",
+        name: "Test User",
+        email: "test@example.com",
+      };
+
+      jest.spyOn(User, "findOne").mockResolvedValue(user);
+
+      try {
+        await RegisterUser(req, res);
+      } catch (error) {
+        expect(error.message).toBe("User already exists");
+        expect(res.json).toHaveBeenCalledWith({
+          message: "User already exists",
+        });
+        expect(res.status).toHaveBeenCalledWith(404);
+      }
+    });
+
+    it("should throw an error and return an error response for invalid input", async () => {
+      const req = { body: { name: "Test User", email: "test@example.com" } };
+      const res = {
+        json: jest.fn(),
+        status: jest.fn(),
+      };
+
+      try {
+        await RegisterUser(req, res);
+      } catch (error) {
+        expect(error.message).toBe("invalid user data");
+        expect(res.json).toHaveBeenCalledWith({ message: "invalid user data" });
+        expect(res.status).toHaveBeenCalledWith(400);
+      }
+    });
+  });
 });
