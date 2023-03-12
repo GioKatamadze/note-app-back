@@ -5,8 +5,7 @@ import { addNote } from "../src/controllers/noteController";
 describe("Note CRUD operation", () => {
   let connection;
   let db;
-  const connectionUrl =
-    "mongodb+srv://GioKatamadze:Tamusi1003@cluster0.wv7r0tt.mongodb.net/note-app";
+  const connectionUrl = `${process.env.MONGO_PROTOCOL}://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/${process.env.MONGO_DATABASE}`;
 
   beforeAll(async () => {
     connection = await mongoose.connect(connectionUrl, {
@@ -26,7 +25,7 @@ describe("Note CRUD operation", () => {
         body: {
           title: "Test Note",
           content: "This is a test note.",
-          user_id: "640d28db0a111f9fac05e395",
+          user_id: "640d350e98296536cb29a6e4",
         },
       };
       const res = {
@@ -39,7 +38,7 @@ describe("Note CRUD operation", () => {
         expect.objectContaining({
           title: "Test Note",
           content: "This is a test note.",
-          user_id: "640d28db0a111f9fac05e395",
+          user_id: "640d350e98296536cb29a6e4",
         })
       );
     });
