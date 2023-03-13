@@ -1,6 +1,6 @@
 # Note App
 
-![Design preview for the Entertainment web app](./src/noteapp.jpg)
+![Design preview for the Entertainment web app](./noteapp.jpg)
 
 ### Links
 
