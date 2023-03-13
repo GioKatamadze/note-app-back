@@ -55,14 +55,14 @@ export const addNote = async (req, res) => {
 export const updateNote = async (req, res) => {
   const { id } = req.params;
   const { title, content } = req.body;
-  const note = await Note.findOne({ id });
+  const note = await Note.findOne({ id: id });
   if (!note) {
     throw Error("There is no note with this id");
     return res.status(401).json({ message: "There is no note with this id" });
   }
 
   await Note.findOneAndUpdate(
-    { id },
+    { id: id },
     {
       title,
       content,
